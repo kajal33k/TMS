@@ -9,25 +9,23 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up()
+    public function up(): void
     {
-        Schema::create('employees', function (Blueprint $table) {
+        Schema::create('attachments', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('role');
-            $table->string('email')->unique();
-            $table->string('password');
-            $table->timestamps(); 
+            $table->foreignId('task_id')->constrained()->onDelete('cascade');
+            $table->string('file_path');
+            $table->timestamps();
         });
+        
+        
     }
-    
-
 
     /**
      * Reverse the migrations.
      */
     public function down(): void
     {
-        Schema::dropIfExists('employees');
+        Schema::dropIfExists('attachments');
     }
 };

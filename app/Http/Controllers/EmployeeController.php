@@ -5,11 +5,17 @@ namespace App\Http\Controllers;
 use App\Models\Employee;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\View\View;
+use Illuminate\Http\JsonResponse;
 
 class EmployeeController extends Controller
 {
-    
+    /**
+     * Display a listing of the employees.
+     *
+     * @return View
+     */
     public function index(): View
     {
         $employees = Employee::query()
@@ -19,69 +25,91 @@ class EmployeeController extends Controller
         return view('employees.index', compact('employees'));
     }
 
-    
+    /**
+     * Show the form for creating a new employee.
+     *
+     * @return View
+     */
     public function create(): View
     {
         return view('employees.create');
     }
 
-    
-    public function store(Request $request)
+    /**
+     * Store a newly created employee in storage.
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function store(Request $request): JsonResponse
     {
-        $request->validate([
+        $validatedData = $request->validate([
             'name' => 'required|string|max:255',
             'role' => 'required|string|max:255',
             'email' => 'required|email|unique:employees,email',
-            'password' => 'required|min:6',
+            'password' => 'required|string|min:8|confirmed'
         ]);
-    
-        Employee::create([
-            'name' => $request->name,
-            'role' => $request->role,
-            'email' => $request->email,
-            'password' => bcrypt($request->password), // Hash password
+
+        $employee = Employee::create([
+            'name' => $validatedData['name'],
+            'role' => $validatedData['role'],
+            'email' => $validatedData['email'],
+            'password' => Hash::make($validatedData['password']),
         ]);
-    
-        return redirect()->route('employees.index')->with('success', 'Employee added successfully!');
+
+        return response()->json([
+            'message' => 'Employee created successfully',
+            'data' => $employee
+        ], 201);
     }
-    
-    
-    
-    public function edit($id)
-{
-    $employee = Employee::findOrFail($id);
-    return view('employees.edit', compact('employee'));
-}
 
-    
-public function update(Request $request, $id)
-{
-    // Step 1: Validate Request Data
-    $request->validate([
-        'name'     => 'required|string|max:255',
-        'role'     => 'required|string|max:255',
-        'email'    => 'required|email|unique:employees,email,' . $id,
-    ]);
+    /**
+     * Show the form for editing the specified employee.
+     *
+     * @param int $id
+     * @return View
+     */
+    public function edit(int $id): View
+    {
+        $employee = Employee::findOrFail($id);
+        return view('employees.edit', compact('employee'));
+    }
 
-    // Step 2: Find Employee & Update
-    $employee = Employee::findOrFail($id);
-    $employee->update([
-        'name'  => $request->name,
-        'role'  => $request->role,
-        'email' => $request->email,
-    ]);
+    /**
+     * Update the specified employee in storage.
+     *
+     * @param Request $request
+     * @param int $id
+     * @return RedirectResponse
+     */
+    public function update(Request $request, int $id): RedirectResponse
+    {
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255',
+            'role' => 'required|string|max:255',
+            'email' => 'required|email|unique:employees,email,' . $id,
+        ]);
 
-    // Step 3: Redirect to Employees List
-    return redirect()->route('employees.index')->with('success', 'Employee updated successfully!');
-}
+        $employee = Employee::findOrFail($id);
+        $employee->update($validatedData);
 
-    
+        return redirect()
+            ->route('employees.index')
+            ->with('success', 'Employee updated successfully!');
+    }
+
+    /**
+     * Remove the specified employee from storage.
+     *
+     * @param Employee $employee
+     * @return RedirectResponse
+     */
     public function destroy(Employee $employee): RedirectResponse
     {
         $employee->delete();
 
         return redirect()
-            ->back()
-            ->with('success', __('Employee deleted successfully.'));
+            ->route('employees.index')
+            ->with('success', 'Employee deleted successfully.');
     }
 }

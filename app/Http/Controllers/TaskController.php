@@ -8,6 +8,31 @@ use Illuminate\Http\Request;
 
 class TaskController extends Controller
 {
+    public function main(){
+        return view('forms.main');
+    }
+
+    public function complain(){
+        return view('forms.complain');
+    }
+
+    public function feedback(){
+        return view('forms.feedback');
+    }
+
+    public function inqury(){
+        return view('forms.inqury');
+    }
+
+    public function user_rec(){
+        return view('forms.user-rec');
+    }
+
+    public function varranty(){
+        return view('forms.varranty');
+    }
+
+
     public function index()
     {
         $tasks = Task::with('employee')->latest()->get();

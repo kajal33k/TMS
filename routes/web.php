@@ -27,7 +27,7 @@ require __DIR__.'/auth.php';
 // EMPLOYEE
 Route::get('/employees', [EmployeeController::class, 'index'])->name('employees.index');
 Route::get('/employees/create', [EmployeeController::class, 'create'])->name('employees.create');
-Route::post('/employees', [EmployeeController::class, 'store'])->name('employees.store');;
+Route::post('/employees/store', [EmployeeController::class, 'store'])->name('employees.store');
 Route::get('/employees/{id}/edit', [EmployeeController::class, 'edit'])->name('employees.edit');
 Route::put('/employees/{id}', [EmployeeController::class, 'update'])->name('employees.update');
 Route::get('/employees/{employee}', [EmployeeController::class, 'destroy'])->name('employees.destroy');
@@ -39,3 +39,12 @@ Route::get('/tasks', [TaskController::class, 'index'])->name('tasks.index');
 Route::post('/tasks', [TaskController::class, 'store'])->name('tasks.store');
 Route::patch('/tasks/{task}', [TaskController::class, 'update'])->name('tasks.update');
 Route::delete('/tasks/{task}', [TaskController::class, 'destroy'])->name('tasks.destroy');
+
+
+// FORMS
+Route::get('/main', [Taskcontroller::class, 'main'])->name('main');
+Route::get('/complain',[TaskController::class, 'complain'])->name('form.controller');
+Route::get('/feedback',[TaskController::class, 'feedback'])->name('form.feedback');
+Route::get('/inqury',[TaskController::class, 'inqury'])->name('form.inqury');
+Route::get('/user_rec',[TaskController::class, 'user_rec'])->name('form.user-rec');
+Route::get('/varranty',[TaskController::class, 'varranty'])->name('form.varranty');

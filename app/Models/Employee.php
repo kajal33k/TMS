@@ -8,8 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class Employee extends Model
 {
     use HasFactory;
+    protected $fillable = ['name', 'email', 'role', 'updated_at', 'created_at'];
 
-    protected $fillable = ['name', 'email', 'position'];
 
     // An Employee can have multiple tasks
     public function tasks()
